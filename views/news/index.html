@@ -1,0 +1,8 @@
+{{extend 'layout.html'}} {{for r in rs:}}
+<BR>
+{{=r.on_create}}
+<b>{{=XML(r.head)}}</b>
+<BR>
+{{=XML(r.body)}}
+<BR>
+--------------------------- {{pass}}

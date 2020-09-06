@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--[if HTML5]><![endif]-->
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]><html class="ie ie6 ie-lte9 ie-lte8 ie-lte7 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if IE 7]><html class="ie ie7 ie-lte9 ie-lte8 ie-lte7 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if IE 8]><html class="ie ie8 ie-lte9 ie-lte8 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if IE 9]><html class="ie9 ie-lte9 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html class="no-js" lang="{{=T.accepted_language or 'en'}}">
+<!--<![endif]-->
+<head>
+<title>{{=SETS.title}}</title>
+<!--[if !HTML5]>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
+  <![endif]-->
+<!-- www.phpied.com/conditional-comments-block-downloads/ -->
+<!-- Always force latest IE rendering engine
+       (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+
+<meta charset="utf-8" />
+
+<!-- http://dev.w3.org/html5/markup/meta.name.html -->
+<meta name="application-name" content="{{=request.application}}" />
+
+<!-- Speaking of Google, don't forget to set your site up:
+       http://google.com/webmasters -->
+<meta name="google-site-verification" content="" />
+
+<!--  Mobile Viewport Fix
+        j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
+        device-width: Occupy full width of the screen in its current orientation
+        initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
+        user-scalable = yes allows the user to zoom in -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!--<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">-->
+<link rel="icon" href="{{=URL('static','images/favicon.png')}}">
+<link rel="apple-touch-icon"
+	href="{{=URL('static','images/favicon.png')}}">
+
+<!-- Required -->
+<link href={{=URL( 'static','css/global-style.css')}} rel="stylesheet"
+	type="text/css" media="screen">
+<link href={{=URL(
+	'static','assets/font-awesome/css/font-awesome.min.css')}} rel="stylesheet"
+	type="text/css" />
+
+{{ show_imgs = not (request.user_agent().is_mobile or request.is_local
+or request.controller == 'appadmin') # or True
+response.files.append(URL('static','css/web2py_my.css')) }}
+
+</head>
+
+<body>
+
+	<div class="">
+
+		<section id="main" class="container" style="padding-bottom: 20px;">
+			{{if response.alert:}}
+			<div style='color: #F73;'>
+				<h3>{{=response.alert}}</h3>
+			</div>
+			{{pass}} {{block center}} {{include}} {{end}}
+
+		</section>
+		<!--/main-->
+
+		<!-- Footer ================================================== -->
+
+		{{include 'lay_footer_short.html'}}
+
+
+	</div>
+	<!-- /container -->
+
+	<!-- The javascript =============================================
+       (Placed at the end of the document so the pages load faster) -->
+	<script type="text/javascript" src={{=URL('static','js/jquery.js')}}></script>
+	<script type="text/javascript" src={{=URL('static','assets/bootstrap/js/bootstrap.min.js')}}></script>
+	{{include 'web2py_ajax_my.html'}}
+	<!--[if lt IE 7 ]>
+      <script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
+      <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
+      <![endif]-->
+	<!--[if lt IE 9]>
+    <script src={{=URL('static','js/html5shiv.js')}}></script>
+    <script src={{=URL('static','js/respond.min.js')}}></script>
+<![endif]-->
+
+
+
+	{{if response.google_analytics_id:}}
+	<script src="{{=URL('static','js/analytics.min.js')}}"></script>
+	<script type="text/javascript">
+  analytics.initialize({
+    'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'} 
+  });</script>
+	{{pass}}
+	<script
+		src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script>
+	<a style="position: fixed; bottom: 0; left: 0; z-index: 1000"
+		href="https://groups.google.com/forum/#!forum/lite-cash"
+		target="_blank"> <img alt=""
+		src="{{=URL('static','images/questions-o.png')}}" />
+	</a>
+
+</body>
+</html>

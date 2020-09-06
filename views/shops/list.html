@@ -1,0 +1,7 @@
+{{extend 'layout.html'}} {{#=STYLE(XML('td {text-align: inherit }'))}}
+
+<link rel="stylesheet" href="{{=URL('static','css/anim.css')}}">
+<div class="right-full controls animated bounceInUp">
+
+	{{=H4(T('Подключенные магазины'))}}
+	{{#=TABLE(*[TR(*rows) for rows in l])}} {{=TABLE(*l, _class='')}}</div>

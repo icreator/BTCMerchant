@@ -1,0 +1,70 @@
+{{extend 'layout.html'}} {{if response.vars:}} {{vars=response.vars}}
+<style type="text/css">
+</style>
+
+<BODY onload='recalc({{=vars["volume_out"]}});'>
+	<script language="javascript" type="text/javascript">
+
+        function recalc(volume) {
+            //volume = volume.toPrecision(2)
+          //$('#prompt').html(volume);
+          var price;
+          var pay_vol;
+          $('li').each(function(i,o) {
+              price = $(this).find('.price').html();
+              if ( price > 0 ) {
+              	pay_vol = volume/price;
+                pay_vol = pay_vol.toPrecision(5);
+                pay_vol = '= ' + pay_vol
+              } else { pay_vol = '---'; }
+              $(this).find('.pay_vol').html(pay_vol + ' ' +$(this).find('.abbrev').html());
+            });
+        }
+        function set_xcurr_in(name) {
+        	$('#xcurr_in').val(name);
+        }
+    </script>
+	{{#=BEAUTIFY(pars)}} {{if 'mess' in vars:}} {{=vars['mess']}} {{pass}}
+	{{if 'shop_mess' in vars:}} {{=vars['shop_mess']}} {{pass}}
+
+	<form enctype="multipart/form-data"
+		action="{{=URL('test_pay', args=[vars['shop_id']])}}" method="post">
+		<div id='acc'>
+			<input type='hidden' name='xcurr_in' id="xcurr_in"> {{for par
+			in pars:}} {{=par['l']}}:<br>{{=par['i']}}<br> {{pass}}
+			{{=T("vol_readonly" in vars and "Сумма к оплате" or
+			"Сколько рублей Вы хотите уплатить")}}:
+			<input type="text" name="volume" class='pay_xval' value={{=vars[
+				'volume_out']}}
+            onkeyup="recalc(this.value);"
+				{{="vol_readonly" in vars and "readonly=true" or ""}}
+                >
+			[{{=vars['curr_out']}}]
+		</div>
+		<div id=xcurr_list>
+			<div id="prompt">{{=T('Выберите
+				криптовалюту которой Вы будете
+				платить')}}:</div>
+			<ul>
+				{{for row in xcurrs_list:}}
+				<li>{{id=row['id'] =IMG(_src=URL('default','download',
+					args=['db', row['icon']]), _width=36, _height=36,
+					_class='lst_icon', _id='lst_icon%s' % id) }} <input type='submit'
+					id='submit{{=id}}' onclick="set_xcurr_in('{{=row['abbrev']}}');"
+					class='my_bu-tton lst_but-ton ' name=xcurr value='{{=row['
+					name']}}'
+                	size=6 {{ if
+					row['expired']:}}
+                		disabled='disabled'{{pass}}
+                    >
+					<span class='exch hidden'>{{=row['exch']}} </span> <span
+					class='price hidden'>{{=row['price']}} </span> <span
+					class='abbrev hidden'>{{=row['abbrev']}} </span> <span
+					class='pay_vol'> </span> <span class=''> ({{=T('по
+						курсу:')}}{{=row['price']}}). </span>
+				</li> {{pass}}
+			</ul>
+		</div>
+	</form>
+</BODY>
+{{pass}}

@@ -1,0 +1,6 @@
+{{extend 'layout.html'}}
+<h1>Это шаблон tools/index.html</h1>
+{{=BEAUTIFY(response._vars)}}
+<a class="btn" data-w2p_disable_with="default" href="{{=URL('tools','get_transactions')}}">Взятьт тразакции</a>
+<br>
+<a class="btn" data-w2p_disable_with="default" href="{{=URL('tools','inits_new_portal')}}">Иницализация портала</a>

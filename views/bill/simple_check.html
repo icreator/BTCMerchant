@@ -1,0 +1,14 @@
+{{extend 'layout.html'}} {{=mess and H4(XML(mess)) or ''}} {{=secr and
+H4('[bill] is secret!') or ''}} {{=T('Ссылка для показа
+созданного счёта на оплату вашему
+клиенту')}}:
+<br>
+{{=B(uuu or '')}} {{=A(T('Перейти'), _href=uuu,
+_target='_blank')}}
+<br>
+<br>
+{{=T('Ссылка для проверки состояния
+оплаты счета')}}:
+<br>
+{{=B(chk or '')}} {{=A(T('Посмотреть'), _href=chk,
+_target='_blank')}} {{=BEAUTIFY(resp)}}

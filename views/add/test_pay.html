@@ -1,0 +1,20 @@
+{{extend 'layout.html'}} {{#=BEAUTIFY(response._vars)}}
+{{=T('Ссылка по которой будет послано
+уведомление об оплате:')}}
+<br>
+{{=uri}}
+<br>
+{{=T('В ответ на это уведомление Ваш сайт
+должен запросить у нашего сервиса
+информацию об оплате согласно API:')}}
+<br>
+order/check/[shop_id]/[bill_id]
+<br>
+<br>
+{{=T('Например так:')}}
+<br>
+{{=URL('order','check',args=[shop_id, bill_id], scheme=True,
+host=True)}}
+<br>
+<br>
+{{=form}}

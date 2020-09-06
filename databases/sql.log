@@ -1,0 +1,4326 @@
+timestamp: 2016-01-12T09:40:00.215000
+CREATE TABLE modules(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    is_enabled CHAR(1),
+    script CHAR(44),
+    ver CHAR(44),
+    url_shop TEXT,
+    url_module TEXT,
+    txt TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:40.040000
+CREATE TABLE currs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    abbrev CHAR(3) UNIQUE,
+    used CHAR(1),
+    name CHAR(25) UNIQUE,
+    name2 CHAR(25) UNIQUE,
+    icon CHAR(512),
+    accuracy INTEGER,
+    add_change INTEGER,
+    balance DOUBLE,
+    deposit DOUBLE,
+    shops_deposit DOUBLE,
+    withdraw_over DOUBLE,
+    fee_in DOUBLE,
+    fee_out DOUBLE,
+    tax_in DOUBLE,
+    tax_out DOUBLE,
+    url CHAR(50),
+    desr TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:40.110000
+CREATE TABLE xcurrs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    first_char CHAR(2),
+    connect_url CHAR(99) UNIQUE,
+    block_time INTEGER,
+    txfee DOUBLE,
+    conf_soft INTEGER,
+    conf_hard INTEGER,
+    conf_true INTEGER,
+    conf_gen INTEGER,
+    from_block INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:40.160000
+CREATE TABLE ecurrs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2016-01-12T09:51:40.209000
+CREATE TABLE exchgs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(25) UNIQUE,
+    used CHAR(1),
+    url CHAR(55) UNIQUE,
+    tax DOUBLE,
+    fee DOUBLE,
+    API_type CHAR(15),
+    API TEXT,
+    pkey TEXT,
+    skey TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:40.261000
+CREATE TABLE exchg_limits(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    exchg_id INTEGER REFERENCES exchgs (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    ticker CHAR(7),
+    reserve DOUBLE,
+    sell DOUBLE,
+    buy DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:40.308000
+CREATE TABLE exchg_taxs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curr1_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    curr2_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    tax DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:40.390000
+CREATE TABLE exchg_pair_bases(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curr1_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    curr2_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    hard_price DOUBLE,
+    base_vol DOUBLE,
+    base_perc DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:40.450000
+CREATE TABLE exchg_pairs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    exchg_id INTEGER REFERENCES exchgs (id) ON DELETE CASCADE  ,
+    used CHAR(1),
+    curr1_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    curr2_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    on_update TIMESTAMP,
+    sp1 DOUBLE,
+    sv1 DOUBLE,
+    bp1 DOUBLE,
+    bv1 DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:40.498000
+CREATE TABLE dealers(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    FIO CHAR(50),
+    doc CHAR(50) UNIQUE,
+    email CHAR(60)
+);
+success!
+timestamp: 2016-01-12T09:51:40.550000
+CREATE TABLE dealers_xwallets(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dealer_id INTEGER REFERENCES dealers (id) ON DELETE CASCADE  ,
+    xcurr_id INTEGER REFERENCES xcurrs (id) ON DELETE CASCADE  ,
+    addr CHAR(100),
+    bal DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:40.594000
+CREATE TABLE shops_cat(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(50) UNIQUE
+);
+success!
+timestamp: 2016-01-12T09:51:40.657000
+CREATE TABLE shops(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cat_id INTEGER REFERENCES shops_cat (id) ON DELETE CASCADE  ,
+    simple_curr INTEGER,
+    name CHAR(50),
+    url CHAR(125),
+    email CHAR(60),
+    icon CHAR(512),
+    icon_url CHAR(60),
+    show_text TEXT,
+    not_used CHAR(1),
+    note_url TEXT,
+    note_on CHAR(15),
+    back_url TEXT,
+    dealer_id INTEGER REFERENCES dealers (id) ON DELETE CASCADE  ,
+    tax DOUBLE,
+    not_listed CHAR(1),
+    descr TEXT,
+    average DOUBLE,
+    uses INTEGER,
+    created_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:40.711000
+CREATE TABLE shops_add(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cat_id INTEGER REFERENCES shops_cat (id) ON DELETE CASCADE  ,
+    name CHAR(50),
+    url CHAR(60),
+    email CHAR(60),
+    icon CHAR(512),
+    CMS CHAR(50),
+    show_text TEXT,
+    note_url TEXT,
+    note_on CHAR(15),
+    back_url TEXT,
+    descr TEXT,
+    wallet_BTC CHAR(50) UNIQUE,
+    wallet_LTC CHAR(50) UNIQUE
+);
+success!
+timestamp: 2016-01-12T09:51:40.772000
+CREATE TABLE shops_balances(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    kept DOUBLE,
+    bal DOUBLE,
+    withdraw_over DOUBLE,
+    updated_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:40.825000
+CREATE TABLE shops_cmds(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    name CHAR(15),
+    hash1 INTEGER,
+    pars TEXT,
+    created_on TIMESTAMP,
+    res TEXT,
+    res_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:40.876000
+CREATE TABLE shops_cmds_stack(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_ INTEGER REFERENCES shops_cmds (id) ON DELETE CASCADE  ,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    hash1 INTEGER,
+    status CHAR(3)
+);
+success!
+timestamp: 2016-01-12T09:51:40.928000
+CREATE TABLE shops_xwallets(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    xcurr_id INTEGER REFERENCES xcurrs (id) ON DELETE CASCADE  ,
+    addr CHAR(50),
+    bal DOUBLE,
+    payouted DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:40.973000
+CREATE TABLE fiat_dealers(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(20) UNIQUE,
+    abbrev CHAR(3) UNIQUE
+);
+success!
+timestamp: 2016-01-12T09:51:41.029000
+CREATE TABLE shops_ewallets(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    dealer_id INTEGER REFERENCES fiat_dealers (id) ON DELETE CASCADE  ,
+    ecurr_id INTEGER REFERENCES ecurrs (id) ON DELETE CASCADE  ,
+    pay_out_MIN DOUBLE,
+    addr CHAR(40),
+    bal DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:41.103000
+CREATE TABLE shop_orders(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    order_id CHAR(50),
+    price DOUBLE,
+    conv_curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    vol_default DOUBLE,
+    keep DOUBLE,
+    expire INTEGER,
+    mess TEXT,
+    secr CHAR(10),
+    lang CHAR(10),
+    curr_in TEXT,
+    curr_in_stop TEXT,
+    not_convert CHAR(1),
+    exchanging CHAR(1),
+    addrs TEXT,
+    addrs_outs TEXT,
+    status CHAR(15),
+    payed_soft DOUBLE,
+    payed_hard DOUBLE,
+    payed_true DOUBLE,
+    email CHAR(60),
+    created_on TIMESTAMP,
+    note_on CHAR(15),
+    back_url CHAR(125)
+);
+success!
+timestamp: 2016-01-12T09:51:41.156000
+CREATE TABLE shop_orders_stack(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES shop_orders (id) ON DELETE CASCADE  ,
+    expire_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:41.205000
+CREATE TABLE shop_orders_notes(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES shop_orders (id) ON DELETE CASCADE  ,
+    cmd_id INTEGER REFERENCES shops_cmds (id) ON DELETE CASCADE  ,
+    created_on TIMESTAMP,
+    tries INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:41.256000
+CREATE TABLE shop_order_addrs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_order_id INTEGER REFERENCES shop_orders (id) ON DELETE CASCADE  ,
+    unused CHAR(1),
+    xcurr_id INTEGER REFERENCES xcurrs (id) ON DELETE CASCADE  ,
+    addr CHAR(50)
+);
+success!
+timestamp: 2016-01-12T09:51:41.309000
+CREATE TABLE rate_orders(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES shop_order_addrs (id) ON DELETE CASCADE  ,
+    created_on TIMESTAMP,
+    volume_in DOUBLE,
+    volume_out DOUBLE,
+    used_amo DOUBLE,
+    status CHAR(3)
+);
+success!
+timestamp: 2016-01-12T09:51:41.359000
+CREATE TABLE rate_orders_stack(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES rate_orders (id) ON DELETE CASCADE  ,
+    created_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:41.409000
+CREATE TABLE bills_draws(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_order_id INTEGER REFERENCES shop_orders (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    addr CHAR(50),
+    amo DOUBLE,
+    created_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:41.468000
+CREATE TABLE bills_draws_trans(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_order_id INTEGER REFERENCES shop_orders (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    txid CHAR(70),
+    amo DOUBLE
+);
+success!
+timestamp: 2016-01-12T09:51:41.540000
+CREATE TABLE shops_trans(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_order_id INTEGER REFERENCES shop_orders (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    amo DOUBLE,
+    desc_ TEXT,
+    created_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:41.600000
+CREATE TABLE shops_draws(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    amo DOUBLE,
+    desc_ TEXT,
+    created_on TIMESTAMP
+);
+success!
+timestamp: 2016-01-12T09:51:41.647000
+CREATE TABLE news_descrs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email CHAR(60) UNIQUE
+);
+success!
+timestamp: 2016-01-12T09:51:41.698000
+CREATE TABLE pay_ins(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_order_addr_id INTEGER REFERENCES shop_order_addrs (id) ON DELETE CASCADE  ,
+    rate_order_id INTEGER,
+    amount DOUBLE,
+    amo_out DOUBLE,
+    created_on TIMESTAMP,
+    status CHAR(15),
+    status_dt TIMESTAMP,
+    amo_ret DOUBLE,
+    in_block INTEGER,
+    txid CHAR(70),
+    vout INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:41.765000
+CREATE TABLE pay_ins_stack(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES pay_ins (id) ON DELETE CASCADE  ,
+    xcurr_id INTEGER REFERENCES xcurrs (id) ON DELETE CASCADE  ,
+    in_block INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:41.823000
+CREATE TABLE pay_ins_return(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES pay_ins (id) ON DELETE CASCADE  ,
+    xcurr_id INTEGER REFERENCES xcurrs (id) ON DELETE CASCADE  ,
+    in_block INTEGER,
+    txid CHAR(70),
+    vout INTEGER,
+    amount DOUBLE,
+    addr CHAR(50)
+);
+success!
+timestamp: 2016-01-12T09:51:41.875000
+CREATE TABLE pay_ins_returned(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES pay_ins (id) ON DELETE CASCADE  ,
+    txid CHAR(70),
+    vout INTEGER,
+    amount DOUBLE,
+    addr CHAR(50)
+);
+success!
+timestamp: 2016-01-12T09:51:41.934000
+CREATE TABLE wagers(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    secr_key CHAR(10),
+    status CHAR(10),
+    total DOUBLE,
+    keep DOUBLE,
+    run_dt TIMESTAMP,
+    maker_fee DOUBLE,
+    maker_addr CHAR(60),
+    bill_ids TEXT,
+    winner_ids TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:41.986000
+CREATE TABLE wagers_stack(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref_id INTEGER REFERENCES wagers (id) ON DELETE CASCADE  ,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    created_on TIMESTAMP,
+    status CHAR(10)
+);
+success!
+timestamp: 2016-01-12T09:51:42.037000
+CREATE TABLE xcurrs_raw_trans(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    xcurr_id INTEGER REFERENCES xcurrs (id) ON DELETE CASCADE  ,
+    txid CHAR(70),
+    tx_hex TEXT,
+    confs INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:42.093000
+CREATE TABLE currs_stats(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curr_id INTEGER REFERENCES currs (id) ON DELETE CASCADE  ,
+    shop_id INTEGER REFERENCES shops (id) ON DELETE CASCADE  ,
+    average DOUBLE,
+    count_ INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:42.156000
+CREATE TABLE news(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    on_create TIMESTAMP,
+    head CHAR(100),
+    body TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:42.205000
+CREATE TABLE recl(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    on_create TIMESTAMP,
+    url CHAR(200),
+    count_ INTEGER,
+    level_ INTEGER
+);
+success!
+timestamp: 2016-01-12T09:51:42.270000
+CREATE TABLE startup(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email CHAR(60) UNIQUE,
+    FIO CHAR(100),
+    passport DOUBLE UNIQUE,
+    founded DOUBLE,
+    on_create TIMESTAMP,
+    mess TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:42.325000
+CREATE TABLE vacs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    on_create TIMESTAMP,
+    job CHAR(512),
+    expertise TEXT,
+    contacts TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:42.374000
+CREATE TABLE logs(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    on_create TIMESTAMP,
+    label123456789 CHAR(20),
+    label1234567890 CHAR(20),
+    mess TEXT
+);
+success!
+timestamp: 2016-01-12T09:51:42.423000
+CREATE TABLE modules(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    is_enabled CHAR(1),
+    ver CHAR(44),
+    url_shop TEXT,
+    url_module TEXT,
+    txt TEXT
+);
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM ecurrs;
+DELETE FROM sqlite_sequence WHERE name='ecurrs';
+success!
+DELETE FROM xcurrs;
+DELETE FROM sqlite_sequence WHERE name='xcurrs';
+success!
+DELETE FROM currs;
+DELETE FROM sqlite_sequence WHERE name='currs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_limits;
+DELETE FROM sqlite_sequence WHERE name='exchg_limits';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchgs;
+DELETE FROM sqlite_sequence WHERE name='exchgs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+timestamp: 2016-01-12T14:09:10.856000
+ALTER TABLE exchg_pairs ADD ticker CHAR(12);
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_pairs;
+DELETE FROM sqlite_sequence WHERE name='exchg_pairs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM modules;
+DELETE FROM sqlite_sequence WHERE name='modules';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+DELETE FROM exchg_taxs;
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs';
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+DELETE FROM "exchg_taxs";
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs'
+success!
+success!
+success!
+DELETE FROM "exchg_taxs";
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs'
+success!
+success!
+success!
+DELETE FROM "exchg_taxs";
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs'
+success!
+success!
+success!
+DELETE FROM "exchg_taxs";
+DELETE FROM sqlite_sequence WHERE name='exchg_taxs'
+success!

@@ -1,0 +1,17 @@
+{{extend 'layout.html'}}
+
+<style type="text/css">
+tbody {
+	border-top: 1px solid #ddd;
+}
+</style>
+<div class="container">
+
+	{{if response.title:}} {{=H2(response.title)}} {{else:}} {{=H2('
+	'.join(x.capitalize() for x in request.function.split('_')))}} {{pass}}
+	{{if len(response._vars)==1:}}
+	{{=BEAUTIFY(response._vars.values()[0])}} {{elif
+	len(response._vars)>1:}} {{=BEAUTIFY(response._vars)}} {{pass}} {{if
+	request.is_local:}} <br> {{=response.toolbar()}} {{pass}}
+
+</div>

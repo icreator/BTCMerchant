@@ -1,0 +1,7 @@
+{{extend 'layout.html'}}
+<link rel="stylesheet" href="{{=URL('static','css/anim.css')}}">
+
+{{#=STYLE(XML('td {text-align: inherit }'))}} {{#=TABLE(*[TR(*rows) for
+rows in l])}} {{#=TABLE(*l)}}
+
+<div class="right-full controls animated fadeInUp">{{=mess}}</div>

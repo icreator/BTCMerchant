@@ -1,0 +1,316 @@
+{{extend 'layout.html'}} {{if SETS.no_img and request.is_local:}}
+SERS.no_img {{else:}}
+<section id="slider-wrapper" class="layer-slider-wrapper">
+	<div id="layerslider" style="width: 100%; height: 500px;">
+
+		<div class="ls-slide" data-ls="transition2d:1;timeshift:-1000;">
+			<!-- slide background -->
+			<img src={{=URL( 'static','images/slider/fw-1.jpg')}} class="ls-bg"
+				alt="Slide background" />
+
+			<!-- Right Image -->
+			<img src={{=URL(
+				'static','images/prv/human-img-4.png')}} class="ls-l"
+				style="top: 48%; left: 70%;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:950;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;"
+				alt="Image layer">
+
+			<!-- Left Text -->
+			<h3 class="ls-l title" style="width: 500px; top: 15%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				{{=T('Financial Freedom. For Free.')}}</h3>
+			<h3 class="ls-l list-item" style="top: 28%; left: 80px;"
+				data-ls="offsetxin: left; rotatein: 90;durationin:1000;delayin:1500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-check"></i></bigger>
+				{{=T('Thousands of new customers from all places on the planet')}}
+			</h3>
+			<h3 class="ls-l list-item" style="top: 35%; left: 80px;"
+				data-ls="offsetxin: left; rotatein: 90;durationin:1000;durationin:1000;delayin:2000;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-check"></i></bigger>
+				{{=T('Free sales to different countries without limits')}}
+			</h3>
+			<h3 class="ls-l list-item" style="top: 42%; left: 80px;"
+				data-ls="offsetxin: left; rotatein: 90;durationin:1000;durationin:1000;delayin:2500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-check"></i></bigger>
+				{{=T('100% payment protection - impossible to cancel payments')}}
+			</h3>
+			<h3 class="ls-l list-item" style="top: 49%; left: 80px;"
+				data-ls="offsetxin: left; rotatein: 90;durationin:1000;durationin:1000;delayin:3000;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-check"></i></bigger>
+				{{=T('Fastest payments acception')}}
+			</h3>
+
+			<p class="ls-l text-standard"
+				style="width: 500px; top: 65%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:3500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				{{=T('You can accept payment in crypto-currencies (bitcoin,
+				litecoin, novacoin etc.) now quickly, free and without
+				registrations!')}}.</p>
+			<button class="btn btn-two btn-lg ls-l" style="top: 84%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:4000;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;"
+				onclick="$('html,body').animate({'scrollTop':500},'slow');">
+				{{=T('Learn More')}}</button>
+		</div>
+
+		<div class="ls-slide" data-ls="transition2d:2;timeshift:-1000;">
+			<!-- slide background -->
+			<img src={{=URL( 'static','images/slider/fw-1.jpg')}} class="ls-bg"
+				alt="Slide background" />
+
+			<!-- Right Image -->
+			<img src={{=URL(
+				'static','images/prv/human-img-1.png')}} class="ls-l"
+				style="top: 58%; left: 70%;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:950;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;"
+				alt="Image layer">
+
+			<!-- Left Text -->
+			<h3 class="ls-l title" style="width: 500px; top: 25%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				{{=T('Easy join. Easy use.')}}</h3>
+			<h3 class="ls-l subtitle" style="top: 35%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:1500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-money"></i></bigger>
+				{{=T('Instant withdrawal. For free')}}.
+			</h3>
+			<h3 class="ls-l subtitle" style="top: 45%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:2000;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-money"></i></bigger>
+				{{=T('Without registration. For Free')}}.
+			</h3>
+			<p class="ls-l text-standard"
+				style="width: 500px; top: 55%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:2500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;">
+				<bigger>
+				<i class="fa fa-line-chart"></i></bigger>
+				{{=T('No hidden fees. Payments Anywhere lets you advise your
+				financial freedom')}}.
+			</p>
+			<button class="btn btn-two btn-lg ls-l" style="top: 75%; left: 80px;"
+				data-ls="offsetxin:0;offsetyin:250;durationin:1000;delayin:3500;offsetxout:0;offsetyout:-8;easingout:easeInOutQuart;scalexout:1.2;scaleyout:1.2;"
+				onclick="$('html,body').animate({'scrollTop':500},'slow');">
+				{{=T('Learn More')}}</button>
+		</div>
+
+	</div>
+</section>
+<section id="00" class="slice bg-2 p-15">
+	<div class="cta-wr">
+		<div class="container">
+			<div class="row">
+
+				<div id="probe3" class="col-md-6">
+					<h1>
+						<strong>Sale Anywhere: </strong>There Is Life ONLINE
+					</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="11" class="slice bg-3">
+	<div class="w-section inverse">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-group"></i>
+						</div>
+
+						<h2>{{=T('Many currencies accept')}}</h2>
+						<p class="text-center">{{=T('All popular crypto-currencies -
+							Bitcoin. Litecoin, NEXT, Novacoin, NODE, etc.')}}.</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-rocket"></i>
+						</div>
+
+						<h2>{{=T('Fast payments')}}</h2>
+						<p class="text-center">{{=T('Payments fly quickly from any
+							country for 2 to 15 minutes')}}</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-trophy"></i>
+						</div>
+
+						<h2>{{=T('Zero fees')}}</h2>
+						<p class="text-center">{{=T('Withdrawal is free of charge. The
+							withdrawal is performed in one day or instantly')}}</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-shield"></i>
+						</div>
+
+						<h2>{{=T('Payment can\'t be canceled')}}</h2>
+						<p class="text-center">{{=T('If payment is made it can not be
+							canceled')}}</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="22" class="slice bg-3">
+	<div class="w-section inverse">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-cube"></i>
+						</div>
+
+						<h2>{{=T('One invoce by many crypto-currencies')}}</h2>
+						<p class="text-center">{{=T('Customer may to close one invoce
+							by some crypto-currencies')}}.</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-gears"></i>
+						</div>
+
+						<h2>{{=T('One invoce by many payments')}}</h2>
+						<p class="text-center">{{=T('Customer may to close one invoce
+							by some crypto-currencies')}}</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-clock-o"></i>
+						</div>
+
+						<h2>{{=T('Invoice may live one day')}}</h2>
+						<p class="text-center">{{=T('Expired time for invoice may be
+							set from 10 mimutes to one day')}}</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="w-box w-box-inverse">
+						<div class="thmb-img">
+							<i class="fa fa-heart"></i>
+						</div>
+
+						<h2>{{=T('Like to customers')}}</h2>
+						<p class="text-center">{{=T('Customer loves to pay by
+							bitcoins')}}</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="slice bg-2" style="padding: 0">
+	<div class="cta-wr" style="padding: 0">
+		<div class="container">
+			<div class="row">
+				<div id="probe1" class="col-sm-8">
+					<h1 style="padding-top: 30px;">
+						<strong>Spend Bitcoins Anywhere: </strong> <a
+							href="https://www.e-coin.io/?ref=4b3a38cb437f4317a1e9ee5782fea22d"
+							target="_blank" class="clr2"> Bitcoin Debit Card</a> & Multi-Sig
+						Wallet
+					</h1>
+				</div>
+				<div id="probe1" class="col-sm-4">
+					<a
+						href="https://www.e-coin.io/?ref=4b3a38cb437f4317a1e9ee5782fea22d"
+						target="_blank" class="pull-right"> <img src={{=URL(
+						'static','images/logos/e-coin-card.png')}} width=200 alt=""></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<section id="companyCarousel" class="carousel carousel-2 slide bg-3"
+	data-ride="carousel">
+	<div class="container" style="position: relative;">
+		<!-- Indicators -->
+		<ol class="carousel-indicators">
+			<li data-target="#companyCarousel" data-slide-to="0" class="active"></li>
+			<li data-target="#companyCarousel" data-slide-to="1"></li>
+		</ol>
+		<div class="carousel-inner">
+			<div class="item active">
+				<div class="row">
+					<div class="col-md-4">{{=H2(T('What is crypto-currency?'))}}
+						{{=P(T('Bitcoin and other crypto-currencies is the new steep in
+						financial and banking technologues. It is fast, safe,
+						international, low fee and fully independant from goverments and
+						politics.'))}} {{=P(T('Bitcoins are saved on your computer or a
+						mobile device and don\'t need any third side - only Yor may manage
+						your bitcoins. It is not need any bank or payment system.'))}}
+						{{=P(T('To pay by bitcoins is very simple and comfortable.'))}}</div>
+					<div class="col-md-6">
+						<img src={{=URL(
+							'static','images/is-04.jpg')}} class="img-responsive" alt="">
+					</div>
+				</div>
+			</div>
+			<div class="item">
+				<div class="row">
+					<div class="col-md-6">{{=H2(T('Easily integrated'))}}
+						{{=P(T('E-commerce and online business are easily integrated with
+						Bitcoin.'))}} {{=H2(T('Other features'))}} {{=P(T('Bitcoin has
+						brillant opportunities for future'))}}</div>
+					<div class="col-md-4">
+						<img src={{=URL(
+							'static','images/is-03.jpg')}} class="img-responsive" alt="">
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+<section id="33" class="slice bg-2 p-15">
+	<div class="cta-wr">
+		<div class="container">
+			<div class="row">
+
+				<div id="probe1" class="col-md-6">
+					<h1>
+						<strong>Sale Anywhere: </strong>There Is Life online
+					</h1>
+				</div>
+				<div class="col-md-6">
+					<a href={{=URL(
+						'default','join')}} class="btn btn-one btn-lg pull-right"> <bigger>
+						<i class="fa fa-hand-o-right"></i></bigger> {{=T('Get started now')}}
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{pass}}
