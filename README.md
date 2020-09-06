@@ -1,5 +1,7 @@
 # Bitcoin and multy crypto-currency merchant for e-commerce
 
+need Python 2.7
+ 
 
 See Presentation of this Merchant by [ LITE.CASH service](https://docs.google.com/presentation/d/1y4zngsZVZ8L2fwQzsO8W0G2eQYAswKyjHawmcvAPEFQ/edit?usp=sharing/)
 
