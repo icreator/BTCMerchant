@@ -20,6 +20,6 @@ Need:
 Готовые модули для скриптов магазинов тут:
 | Shop Script | Module  | Example |
 |--|--|--|
-| OpenCart | [Merchant Module](https://github.com/icreator/opencart_bitcoin_module) |[ Пример использования](https://opencartforum.com/files/file/2037-platezhi-v-bitkoin-na-sayt/)|
+| OpenCart | [Merchant Module](https://github.com/icreator/opencart_bitcoin_module) |[ Пример использования](https://opencartforum.com/files/file/2445-upravlenie-depozitom-i-sposobami-oplaty-zakazov-pro/?tab=details/)|
 | Prestashop | [Merchant Module](https://github.com/icreator/prestashop_bitcoin_module) | |
 
